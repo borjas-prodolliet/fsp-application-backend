@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -29,7 +28,7 @@ public class CustomerService {
     public void addCustomer(CustomerRegistrationRequest registrationRequest) {
         // check if email is taken
         String email = registrationRequest.email();
-        if (customerDao.existsPersonWithEmail(email)) {
+        if (customerDao.existsCustomerWithEmail(email)) {
             throw new DuplicateResourceException("email already taken");
         }
 
@@ -44,7 +43,7 @@ public class CustomerService {
     }
 
     public void deleteCustomerById(Long customerId) {
-        if (!customerDao.existsPersonWithId(customerId)) {
+        if (!customerDao.existsCustomerWithId(customerId)) {
             throw new ResourceNotFoundException("customer with id [%s] not found".formatted(customerId));
         }
 
@@ -67,7 +66,7 @@ public class CustomerService {
         }
 
         if (updateRequest.email() != null && !updateRequest.email().equals(customer.getEmail())) {
-            if (customerDao.existsPersonWithEmail(updateRequest.email())) {
+            if (customerDao.existsCustomerWithEmail(updateRequest.email())) {
                 throw new DuplicateResourceException("email already taken");
             }
             customer.setEmail(updateRequest.email());
