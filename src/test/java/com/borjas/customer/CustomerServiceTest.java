@@ -1,6 +1,7 @@
 package com.borjas.customer;
 
 import com.borjas.exeption.DuplicateResourceException;
+import com.borjas.exeption.RequestValidationException;
 import com.borjas.exeption.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -145,11 +146,149 @@ class CustomerServiceTest {
     }
 
     @Test
-    void updateCustomer() {
+    void canUpdateAllCustomerProperties() {
         // Given
+        var id = 1L;
+        Customer customer = new Customer(
+                id, "Alex", "alex@gmail.com", 19
+        );
+        when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
+
+        String newEmail = "andro@gmail.com";
+        CustomerUpdateRequest updateRequest = new CustomerUpdateRequest("Andro", newEmail, 22);
+
+        when(customerDao.existsCustomerWithEmail(newEmail)).thenReturn(false);
 
         // When
+        underTest.updateCustomer(id, updateRequest);
 
         // Then
+        ArgumentCaptor<Customer> customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerDao).updateCustomer(customerArgumentCaptor.capture());
+        Customer capturedCustomer = customerArgumentCaptor.getValue();
+
+        assertThat(capturedCustomer.getAge()).isEqualTo(updateRequest.age());
+        assertThat(capturedCustomer.getEmail()).isEqualTo(updateRequest.email());
+        assertThat(capturedCustomer.getName()).isEqualTo(updateRequest.name());
+    }
+
+    @Test
+    void canUpdateOnlyCustomerName() {
+        // Given
+        var id = 1L;
+        Customer customer = new Customer(
+                id, "Alex", "alex@gmail.com", 19
+        );
+        when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
+
+        CustomerUpdateRequest updateRequest = new CustomerUpdateRequest("Andro", null, null);
+
+        // When
+        underTest.updateCustomer(id, updateRequest);
+
+        // Then
+        ArgumentCaptor<Customer> customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerDao).updateCustomer(customerArgumentCaptor.capture());
+        Customer capturedCustomer = customerArgumentCaptor.getValue();
+
+        assertThat(capturedCustomer.getAge()).isEqualTo(customer.getAge());
+        assertThat(capturedCustomer.getEmail()).isEqualTo(customer.getEmail());
+        assertThat(capturedCustomer.getName()).isEqualTo(updateRequest.name()); // change
+    }
+
+    @Test
+    void canUpdateOnlyCustomerEmail() {
+        // Given
+        var id = 1L;
+        Customer customer = new Customer(
+                id, "Alex", "alex@gmail.com", 19
+        );
+        when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
+
+
+        String newEmail = "andro@gmail.com";
+        CustomerUpdateRequest updateRequest = new CustomerUpdateRequest(null, newEmail, null);
+
+        when(customerDao.existsCustomerWithEmail(newEmail)).thenReturn(false);
+
+        // When
+        underTest.updateCustomer(id, updateRequest);
+
+        // Then
+        ArgumentCaptor<Customer> customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerDao).updateCustomer(customerArgumentCaptor.capture());
+        Customer capturedCustomer = customerArgumentCaptor.getValue();
+
+        assertThat(capturedCustomer.getAge()).isEqualTo(customer.getAge());
+        assertThat(capturedCustomer.getEmail()).isEqualTo(updateRequest.email()); // change
+        assertThat(capturedCustomer.getName()).isEqualTo(customer.getName());
+    }
+
+    @Test
+    void canUpdateOnlyCustomerAge() {
+        // Given
+        var id = 1L;
+        Customer customer = new Customer(
+                id, "Alex", "alex@gmail.com", 19
+        );
+        when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
+
+        CustomerUpdateRequest updateRequest = new CustomerUpdateRequest(null, null, 23);
+
+        // When
+        underTest.updateCustomer(id, updateRequest);
+
+        // Then
+        ArgumentCaptor<Customer> customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerDao).updateCustomer(customerArgumentCaptor.capture());
+        Customer capturedCustomer = customerArgumentCaptor.getValue();
+
+        assertThat(capturedCustomer.getAge()).isEqualTo(updateRequest.age()); // change
+        assertThat(capturedCustomer.getEmail()).isEqualTo(customer.getEmail());
+        assertThat(capturedCustomer.getName()).isEqualTo(customer.getName()); // change
+    }
+
+    @Test
+    void willThrowWhenTryToUpdateCustomerEmailWhenAlreadyTaken() {
+        // Given
+        var id = 1L;
+        Customer customer = new Customer(
+                id, "Alex", "alex@gmail.com", 19
+        );
+        when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
+
+
+        String newEmail = "andro@gmail.com";
+        CustomerUpdateRequest updateRequest = new CustomerUpdateRequest(null, newEmail, null);
+
+        when(customerDao.existsCustomerWithEmail(newEmail)).thenReturn(true);
+
+        // When
+        assertThatThrownBy(() -> underTest.updateCustomer(id, updateRequest))
+                .isInstanceOf(DuplicateResourceException.class)
+                .hasMessage("email already taken");
+
+        // Then
+        verify(customerDao, never()).updateCustomer(any());
+    }
+
+    @Test
+    void willThrownWhenCustomerUpdateHasNoChanges() {
+        // Given
+        var id = 1L;
+        Customer customer = new Customer(
+                id, "Alex", "alex@gmail.com", 19
+        );
+        when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
+
+        CustomerUpdateRequest updateRequest = new CustomerUpdateRequest(customer.getName(), customer.getEmail(), customer.getAge());
+
+        // When
+        assertThatThrownBy(() -> underTest.updateCustomer(id, updateRequest))
+                .isInstanceOf(RequestValidationException.class)
+                .hasMessage("no data changes found");
+
+        // Then
+        verify(customerDao, never()).updateCustomer(any());
     }
 }
