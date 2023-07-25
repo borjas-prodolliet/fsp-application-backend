@@ -1,5 +1,6 @@
 package com.borjas.customer;
 
+import com.borjas.exeption.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,10 +46,25 @@ class CustomerServiceTest {
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
         // When
-        underTest.getCustomer(id);
+        Customer actual = underTest.getCustomer(id);
 
         // Then
-        verify(customerDao).selectCustomerById(id);
+        assertThat(actual).isEqualTo(customer);
+    }
+
+    @Test
+    void willThrowWhenGetCustomerReturnsEmptyOptional() {
+        // Given
+        var id = 1L;
+        when(customerDao.selectCustomerById(id)).thenReturn(Optional.empty());
+
+        // When
+        // Then
+        assertThatThrownBy(() -> underTest.getCustomer(id))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage(
+                        "customer with id [%s] not found".formatted(id)
+                );
     }
 
     @Test
