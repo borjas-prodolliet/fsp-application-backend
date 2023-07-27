@@ -9,7 +9,7 @@ import java.sql.SQLException;
 @Component
 public class CustomerRowMapper implements RowMapper {
     @Override
-    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
         Customer customer = new Customer(
                 rs.getLong("id"),
                 rs.getString("name"),
