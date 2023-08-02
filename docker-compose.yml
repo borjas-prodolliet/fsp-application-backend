@@ -27,21 +27,18 @@ services:
     networks:
       - postgres
     restart: unless-stopped
-#  zipkin:
-#    image: openzipkin/zipkin
-#    container_name: zipkin
-#    ports:
-#      - "9411:9411"
-#    networks:
-#      - spring
-#  rabbitmq:
-#    image: rabbitmq:3.9.11-management-alpine
-#    container_name: rabbitmq
-#    ports:
-#      - "5672:5672"
-#      - "15672:15672"
-#    networks:
-#      - spring
+  borjas-fsp-api:
+    container_name: borjas-fsp-api
+    image: borjasprodolliet/borjas-fsp-backend-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/customer
+    ports:
+      - "8090:8081"
+    networks:
+      - postgres
+    depends_on:
+      - postgres
+    restart: unless-stopped
 
 networks:
   postgres:
