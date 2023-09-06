@@ -1,15 +1,19 @@
 package com.borjas.customer;
 
+import com.borjas.jwt.JWTUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/customer")
+@RequestMapping("api/v1/customers")
 @AllArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
+    private final JWTUtil jwtUtil;
 
     @GetMapping
     public List<Customer> getCustomers() {
@@ -22,8 +26,12 @@ public class CustomerController {
     }
 
     @PostMapping
-    public void registerCustomer(@RequestBody CustomerRegistrationRequest request) {
+    public ResponseEntity<?> registerCustomer(@RequestBody CustomerRegistrationRequest request) {
         customerService.addCustomer(request);
+        String jwtToken = jwtUtil.issueToken(request.email(), "ROLE_ADMIN");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .build();
     }
 
     @DeleteMapping("/{customerId}")
