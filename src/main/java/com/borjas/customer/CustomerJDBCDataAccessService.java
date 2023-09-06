@@ -20,7 +20,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     @Override
     public List<Customer> selectAllCustomers() {
         var sql = """
-                SELECT id, name, email, age
+                SELECT id, name, email, password, age
                 FROM customer
                 """;
 
@@ -30,7 +30,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     @Override
     public Optional<Customer> selectCustomerById(Long customerId) {
         var sql = """
-                SELECT id, name, email, age
+                SELECT id, name, email, password, age
                 FROM customer
                 WHERE id = ?
                 """;
@@ -43,11 +43,11 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     @Override
     public void insertCustomer(Customer customer) {
         var sql = """
-                INSERT INTO customer(name, email, age)
-                VALUES (?, ?, ?)
+                INSERT INTO customer(name, email, password, age)
+                VALUES (?, ?, ?, ?)
                 """;
 
-        int result = jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getAge());
+        int result = jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getPassword(), customer.getAge());
 
         System.out.println("jdbcTemplate.update = " + result);
     }
@@ -105,5 +105,18 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
             int result = jdbcTemplate.update(sql, update.getEmail(), update.getId());
             System.out.println("update customer email result = " + result);
         }
+    }
+
+    @Override
+    public Optional<Customer> selectUserByEmail(String email) {
+        var sql = """
+                SELECT id, name, email, password, age
+                FROM customer
+                WHERE email = ?
+                """;
+
+        return jdbcTemplate.query(sql, customerRowMapper, email)
+                .stream()
+                .findFirst();
     }
 }

@@ -43,7 +43,7 @@ class CustomerServiceTest {
         // Given
         var id = 1L;
         Customer customer = new Customer(
-                id, "Alex", "alex@gmail.com", 19
+                id, "alex@gmail.com", "password", "Alex", 19
         );
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
@@ -77,7 +77,7 @@ class CustomerServiceTest {
         when(customerDao.existsCustomerWithEmail(email)).thenReturn(false);
 
         CustomerRegistrationRequest request = new CustomerRegistrationRequest(
-                "Alex", email, 18
+                "Alex", email, "password", 18
         );
 
         // When
@@ -104,7 +104,7 @@ class CustomerServiceTest {
         when(customerDao.existsCustomerWithEmail(email)).thenReturn(true);
 
         CustomerRegistrationRequest request = new CustomerRegistrationRequest(
-                "Alex", email, 18
+                "Alex", email, "password", 18
         );
 
         // When
@@ -150,7 +150,7 @@ class CustomerServiceTest {
         // Given
         var id = 1L;
         Customer customer = new Customer(
-                id, "Alex", "alex@gmail.com", 19
+                id, "alex@gmail.com", "password", "Alex", 19
         );
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
@@ -177,7 +177,7 @@ class CustomerServiceTest {
         // Given
         var id = 1L;
         Customer customer = new Customer(
-                id, "Alex", "alex@gmail.com", 19
+                id, "alex@gmail.com", "password", "Alex", 19
         );
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
@@ -201,7 +201,7 @@ class CustomerServiceTest {
         // Given
         var id = 1L;
         Customer customer = new Customer(
-                id, "Alex", "alex@gmail.com", 19
+                id, "alex@gmail.com", "password", "Alex", 19
         );
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
@@ -229,7 +229,7 @@ class CustomerServiceTest {
         // Given
         var id = 1L;
         Customer customer = new Customer(
-                id, "Alex", "alex@gmail.com", 19
+                id, "alex@gmail.com", "password", "Alex", 19
         );
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
@@ -253,7 +253,7 @@ class CustomerServiceTest {
         // Given
         var id = 1L;
         Customer customer = new Customer(
-                id, "Alex", "alex@gmail.com", 19
+                id, "alex@gmail.com", "password", "Alex", 19
         );
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
@@ -277,7 +277,7 @@ class CustomerServiceTest {
         // Given
         var id = 1L;
         Customer customer = new Customer(
-                id, "Alex", "alex@gmail.com", 19
+                id, "alex@gmail.com", "password", "Alex", 19
         );
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 

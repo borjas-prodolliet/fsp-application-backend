@@ -37,7 +37,7 @@ public class CustomerIT {
         Random random = new Random();
         int age = random.nextInt(1, 100);
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age);
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, "password", age);
 
         // send a post request
         webTestClient.post()
@@ -63,7 +63,7 @@ public class CustomerIT {
 
         // make sure that customer is present
         Customer expectedCustomer = new Customer(
-                name, email, age
+                name, email, "password", age
         );
 
         assertThat(allCustomers)
@@ -100,7 +100,7 @@ public class CustomerIT {
         Random random = new Random();
         int age = random.nextInt(1, 100);
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age);
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, "password", age);
 
         // send a post request
         webTestClient.post()
@@ -157,7 +157,7 @@ public class CustomerIT {
         Random random = new Random();
         int age = random.nextInt(1, 100);
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age);
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, "password", age);
 
         // send a post request
         webTestClient.post()
@@ -213,7 +213,7 @@ public class CustomerIT {
                 .returnResult()
                 .getResponseBody();
 
-        Customer expected = new Customer(id, newName, email, age);
+        Customer expected = new Customer(id,email, "password", newName, age);
 
         assertThat(updatedCustomer).isEqualTo(expected);
     }

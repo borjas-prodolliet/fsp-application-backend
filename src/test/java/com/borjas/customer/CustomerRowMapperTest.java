@@ -19,6 +19,7 @@ class CustomerRowMapperTest {
         when(resultSet.getLong("id")).thenReturn(1L);
         when(resultSet.getString("name")).thenReturn("Jamila");
         when(resultSet.getString("email")).thenReturn("jamila@gmail.com");
+        when(resultSet.getString("password")).thenReturn("password");
         when(resultSet.getInt("age")).thenReturn(19);
 
         // When
@@ -26,8 +27,8 @@ class CustomerRowMapperTest {
 
         // Then
         Customer expected = new Customer(
-                1L, "Jamila", "jamila@gmail.com", 19
-        );
+                1L, "Jamila", "jamila@gmail.com", "password", 19
+                );
 
         assertThat(actual).isEqualTo(expected);
     }

@@ -29,7 +29,7 @@ public class FspApplication {
             Customer customer = new Customer(
                     firstName + " " + lastName,
                     firstName.toLowerCase() + "." + lastName.toLowerCase() + "@example.com",
-                    random.nextInt(16, 99)
+                    "password", random.nextInt(16, 99)
             );
 
 
