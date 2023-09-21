@@ -4,6 +4,7 @@ import com.borjas.exeption.DuplicateResourceException;
 import com.borjas.exeption.RequestValidationException;
 import com.borjas.exeption.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +12,11 @@ import java.util.List;
 @Service
 public class CustomerService {
     private final CustomerDao customerDao;
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(@Qualifier("jdbc") CustomerDao customerDao) {
+    public CustomerService(@Qualifier("jpa") CustomerDao customerDao, PasswordEncoder passwordEncoder) {
         this.customerDao = customerDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Customer> getAllCustomers() {
@@ -36,7 +39,7 @@ public class CustomerService {
         Customer customer = new Customer(
                 registrationRequest.name(),
                 registrationRequest.email(),
-                registrationRequest.password(),
+                passwordEncoder.encode(registrationRequest.password()),
                 registrationRequest.age()
         );
 

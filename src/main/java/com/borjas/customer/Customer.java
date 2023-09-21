@@ -30,7 +30,6 @@ public class Customer implements UserDetails {
             sequenceName = "customer_id_seq",
             allocationSize = 1
     )
-
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "customer_id_seq"
