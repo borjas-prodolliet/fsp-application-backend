@@ -107,10 +107,14 @@ public class CustomerIT {
         Name fakerName = faker.name();
         String name = fakerName.fullName();
         String email = fakerName.lastName().toLowerCase() + "-" + UUID.randomUUID() + "@gmail.com";
+        String email2 = email + ".ar";
         Random random = new Random();
         int age = random.nextInt(1, 100);
 
         CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, "password", age);
+
+        CustomerRegistrationRequest request2 = new CustomerRegistrationRequest(name, email2, "password", age);
+
 
         // send a post request get jwt token
         String jwtToken = webTestClient.post()
@@ -126,6 +130,16 @@ public class CustomerIT {
                 .get(AUTHORIZATION)
                 .get(0);
 
+        // create second user to be deleted
+        webTestClient.post()
+                .uri(CUSTOMER_URI)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(request2), CustomerRegistrationRequest.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+
         // get all customers
         List<CustomerDTO> allCustomers = webTestClient.get()
                 .uri(CUSTOMER_URI)
@@ -140,7 +154,7 @@ public class CustomerIT {
                 .getResponseBody();
 
         var id = allCustomers.stream()
-                .filter(c -> c.email().equals(email))
+                .filter(c -> c.email().equals(email2))
                 .map(CustomerDTO::id)
                 .findFirst()
                 .orElseThrow();
